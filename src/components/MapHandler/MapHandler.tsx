@@ -9,7 +9,7 @@ const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
 
   const fetchData = async (place: google.maps.places.PlaceResult) => {
-    await fetch("http://localhost:3000/api/db", {
+    await fetch("/api/db", {
       method: "POST",
       body: JSON.stringify(place),
     });
