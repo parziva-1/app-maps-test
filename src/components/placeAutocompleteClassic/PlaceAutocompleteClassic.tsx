@@ -31,7 +31,6 @@ const PlaceAutocompleteClassic = ({ onPlaceSelect }: Props) => {
       setInputValue(placeAutocomplete.getPlace().formatted_address as string);
     });
   }, [onPlaceSelect, placeAutocomplete]);
-
   const handleClearInput = () => {
     setInputValue("");
   };

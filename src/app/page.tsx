@@ -28,11 +28,6 @@ export default function Home() {
   return (
     <main style={{ height: "100vh" }}>
       <APIProvider apiKey={mapsApiKey}>
-        {/* 
-      <h1>HomePage</h1>
-      <button onClick={() => handleButton()}>
-        {session ? "signOut" : "signIn"}
-      </button> */}
         <MapHandler place={selectedPlace} />
         <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
 
