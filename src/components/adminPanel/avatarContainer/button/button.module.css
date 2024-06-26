@@ -1,0 +1,36 @@
+.button {
+    background-color: #6200ea;
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .button:hover {
+    background-color: #3700b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .signin {
+    background-color: #6200ea; /* Purple for Sign In */
+  }
+  
+  .signout {
+    background-color: #b00020; /* Red for Sign Out */
+  }
+  
+  .signin:hover {
+    background-color: #3700b3;
+  }
+  
+  .signout:hover {
+    background-color: #790000;
+  }

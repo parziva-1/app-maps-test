@@ -1,33 +1,23 @@
 "use client";
-import { useSession, signIn, signOut } from "next-auth/react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
-import { useState } from "react";
+import {  useState } from "react";
 import { MapHandler } from "@/components/mapHandler";
 import { PlaceAutocomplete } from "@/components/placeAutocomplete";
+import { AdminPanel } from "@/components/adminPanel";
+
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 export default function Home() {
-  const { data: session } = useSession();
 
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.PlaceResult | null>(null);
 
-  // checking if sessions exists
-  if (session) {
-    //logged in code
-  }
 
-  const handleButton = () => {
-    if (session) {
-      signOut();
-      return;
-    }
-    signIn();
-  };
 
   return (
-    <main style={{ height: "100vh" }}>
+    <main className="main">
       <APIProvider apiKey={mapsApiKey}>
+        <AdminPanel />
         <MapHandler place={selectedPlace} />
         <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
 

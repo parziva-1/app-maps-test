@@ -18,7 +18,13 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: #fff
+  background: #fff;
+}
+
+.main {
+  height: 100vh;
+  width: 100%;
+  display: flex;
 }
 
 @layer utilities {

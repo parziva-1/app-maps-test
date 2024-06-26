@@ -1,0 +1,12 @@
+.container {
+  width: 400px;
+  height: 100vh;
+  color:black;
+}
+
+.containerCards {
+  margin-top: 25%;
+  height: 80%;
+  width: 100%;
+  background-color: red;
+}
