@@ -2,8 +2,8 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { useState } from "react";
-import PlaceAutocompleteClassic from "@/components/placeAutocompleteClassic/PlaceAutocompleteClassic";
-import MapHandler from "@/components/MapHandler/MapHandler";
+import { MapHandler } from "@/components/mapHandler";
+import { PlaceAutocomplete } from "@/components/placeAutocomplete";
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
 
 export default function Home() {
@@ -29,7 +29,7 @@ export default function Home() {
     <main style={{ height: "100vh" }}>
       <APIProvider apiKey={mapsApiKey}>
         <MapHandler place={selectedPlace} />
-        <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
+        <PlaceAutocomplete onPlaceSelect={setSelectedPlace} />
 
         <Map
           defaultZoom={3}
