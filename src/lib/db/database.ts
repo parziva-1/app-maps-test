@@ -8,9 +8,9 @@ export const connectToDatabase = async () => {
     return;
   }
 
-  console.log(process.env.NEXT_PUBLIC_MONGODB_URI);
+  console.log(process.env.MONGODB_URI);
   try {
-    await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI ?? "");
+    await mongoose.connect(process.env.MONGODB_URI ?? "");
     isConnected = true;
   } catch (error) {
     console.log(error);
