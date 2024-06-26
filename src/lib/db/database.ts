@@ -8,7 +8,6 @@ export const connectToDatabase = async () => {
     return;
   }
 
-  console.log(process.env.MONGODB_URI);
   try {
     await mongoose.connect(process.env.MONGODB_URI ?? "");
     isConnected = true;
