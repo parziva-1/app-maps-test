@@ -1,19 +1,16 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
-import { useEffect, useState } from "react";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
+import { useState } from "react";
+import PlaceAutocompleteClassic from "@/components/placeAutocompleteClassic/PlaceAutocompleteClassic";
+import MapHandler from "@/components/MapHandler/MapHandler";
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
-console.log({ mapsApiKey });
+
 export default function Home() {
   const { data: session } = useSession();
 
-  const position = { lat: 53.54992, lng: 10.00678 };
-
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const [selectedPlace, setSelectedPlace] =
+    useState<google.maps.places.PlaceResult | null>(null);
 
   // checking if sessions exists
   if (session) {
@@ -30,18 +27,22 @@ export default function Home() {
 
   return (
     <main style={{ height: "100vh" }}>
-      {/* 
+      <APIProvider apiKey={mapsApiKey}>
+        {/* 
       <h1>HomePage</h1>
       <button onClick={() => handleButton()}>
         {session ? "signOut" : "signIn"}
       </button> */}
-      {isClient && (
-        <APIProvider apiKey={mapsApiKey}>
-          <Map defaultCenter={position} defaultZoom={10}>
-            <Marker position={position} />
-          </Map>
-        </APIProvider>
-      )}
+        <MapHandler place={selectedPlace} />
+        <PlaceAutocompleteClassic onPlaceSelect={setSelectedPlace} />
+
+        <Map
+          defaultZoom={3}
+          defaultCenter={{ lat: 22.54992, lng: 0 }}
+          gestureHandling={"greedy"}
+          disableDefaultUI={true}
+        />
+      </APIProvider>
     </main>
   );
 }
