@@ -11,6 +11,8 @@ export interface ILocation extends Document {
       south: number;
       west: number;
     };
+    createdAt: Date;
+    updatedAt: Date;
   };
   name: string;
 }
@@ -28,6 +30,8 @@ const addressSchema = new Schema(
       },
     },
     name: String,
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
   {
     toJSON: {
