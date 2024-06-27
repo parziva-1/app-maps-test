@@ -1,4 +1,5 @@
 import { useMap } from "@vis.gl/react-google-maps";
+import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 interface PropsHandler {
@@ -7,11 +8,12 @@ interface PropsHandler {
 
 const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
+  const { data: session } = useSession();
 
   const fetchData = async (place: google.maps.places.PlaceResult) => {
-    await fetch("/api/db", {
+    await fetch("/api/locations", {
       method: "POST",
-      body: JSON.stringify(place),
+      body: JSON.stringify({ location: place, user: session?.user }),
     });
   };
 

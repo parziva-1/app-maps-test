@@ -20,9 +20,19 @@ const AvatarContainer = () => {
   return (
     <section>
       {session ? (
-        <Button  type="" onClick={() => handleButton()}>signOut</Button>
+        <>
+          <p>{session?.user?.name}</p>
+          <p>{session?.user?.email}</p>
+        </>
+      ) : null}
+      {session ? (
+        <Button type="" onClick={() => handleButton()}>
+          signOut
+        </Button>
       ) : (
-        <Button type="signIn" onClick={() => handleButton()}>signIn</Button>
+        <Button type="signIn" onClick={() => handleButton()}>
+          signIn
+        </Button>
       )}
     </section>
   );
