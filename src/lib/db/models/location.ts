@@ -5,6 +5,7 @@ export interface ILocation extends Document {
   formatted_address: string;
   geometry: {
     viewport: {
+      _id?: string;
       east: number;
       north: number;
       south: number;

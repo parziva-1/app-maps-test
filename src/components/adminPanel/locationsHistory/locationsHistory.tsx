@@ -1,9 +1,13 @@
-import { ILocation } from "@/lib/db/database";
+import { ILocation } from "@/lib/db/models/location";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useMap } from "@vis.gl/react-google-maps";
+import { CardHistory } from "./cardHistory";
+import styles from "./locationsHistory.module.css";
 
 const LocationsHistory = () => {
   const [data, setData] = useState<ILocation[]>();
+  const map = useMap();
 
   const { data: sesion } = useSession();
 
@@ -21,20 +25,30 @@ const LocationsHistory = () => {
     }
   };
 
+  const handleSelectLocation = (
+    location: ILocation["geometry"]["viewport"]
+  ) => {
+    if (map) map.fitBounds(location);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   return (
-    <>
+    <div className={styles.historyContainer}>
       {data?.length ? (
         <>
           {data.map((v) => (
-            <p key={String(v.formatted_address)}>{v.formatted_address}</p>
+            <CardHistory
+              key={v.formatted_address}
+              handleSelectLocation={handleSelectLocation}
+              data={v}
+            />
           ))}
         </>
       ) : null}
-    </>
+    </div>
   );
 };
 

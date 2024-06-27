@@ -9,7 +9,7 @@ interface Props {
 const PlaceAutocompleteClassic = ({ onPlaceSelect }: Props) => {
   const [placeAutocomplete, setPlaceAutocomplete] =
     useState<google.maps.places.Autocomplete | null>(null);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const places = useMapsLibrary("places");
 
