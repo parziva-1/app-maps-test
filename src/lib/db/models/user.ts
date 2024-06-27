@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema, model } from "mongoose";
 
-interface IUser extends Document<IUser> {
+export interface IUser extends Document<IUser> {
   type: string;
-  email: string;
+  email?: string;
   name: string;
   createdAt: Date;
   updatedAt: Date;

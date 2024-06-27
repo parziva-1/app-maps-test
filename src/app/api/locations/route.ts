@@ -8,7 +8,8 @@ export async function GET() {
   await connectToDatabase();
 
   try {
-    const locations = await Location.find({});
+    const userId = cookies().get("user_id")?.value;
+    const locations = await Location.find({ userId });
     return NextResponse.json({ msg: "Locations:", locations });
   } catch (error) {
     console.error("Error fetching locations:", error);
@@ -20,10 +21,9 @@ export async function POST(req: Request) {
   try {
     await connectToDatabase();
 
-    const res = await req.json();
-    console.log({ res });
+    const { location } = await req.json();
 
-    if (!res.location) {
+    if (!location) {
       return NextResponse.json(
         { msg: "Location data is required" },
         { status: 400 }
@@ -31,11 +31,12 @@ export async function POST(req: Request) {
     }
 
     let userId = cookies().get("user_id")?.value;
+
     if (!userId) {
       const newUser = new User({
-        type: res.user ? "registered" : "guest",
-        name: res.user?.name ?? "guest",
-        email: res.user?.email ?? "guest",
+        type: "guest",
+        name: "guest",
+        email: "guest",
       });
       const savedUser = await newUser.save();
       userId = String(savedUser._id);
@@ -45,8 +46,8 @@ export async function POST(req: Request) {
       cookieStore.set("user_type", String(savedUser.type));
     }
 
-    const location = new Location({ ...res.location, userId });
-    const savedLocation = await location.save();
+    const locationToSave = new Location({ ...location, userId });
+    const savedLocation = await locationToSave.save();
 
     return NextResponse.json(
       {

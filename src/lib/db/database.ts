@@ -1,4 +1,6 @@
-import mongoose, { Document, Schema, model } from "mongoose";
+import mongoose from "mongoose";
+import { Location, User } from "./models";
+import { IUser } from "./models/user";
 
 let isConnected = false;
 export const connectToDatabase = async () => {
@@ -16,75 +18,70 @@ export const connectToDatabase = async () => {
   }
 };
 
-export interface ILocation extends Document {
-  userId: Schema.Types.ObjectId;
-  formatted_address: string;
-  geometry: {
-    viewport: {
-      east: number;
-      north: number;
-      south: number;
-      west: number;
-    };
-  };
-  name: string;
-}
+export const getDatabaseUserByEmail = async (userEmail: string) => {
+  await connectToDatabase();
 
-const addressSchema = new Schema(
-  {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    formatted_address: String,
-    geometry: {
-      viewport: {
-        east: Number,
-        north: Number,
-        south: Number,
-        west: Number,
-      },
-    },
-    name: String,
-  },
-  {
-    toJSON: {
-      transform: (doc, ret) => {
-        delete ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
-    toObject: {
-      transform: (doc, ret) => {
-        delete ret._id;
-        delete ret.__v;
-        return ret;
-      },
-    },
+  try {
+    const user = await User.findOne({ email: userEmail }).exec();
+    return user;
+  } catch (error) {
+    console.error("Error fetching user from database:", error);
+    return null;
   }
-);
+};
 
-interface IUser extends Document<IUser> {
-  type: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export const registerNewUser = async (user: IUser) => {
+  await connectToDatabase();
 
-const userSchema = new Schema({
-  type: { type: String, required: true },
-  email: {
-    type: String,
-    required() {
-      return (this as IUser).type === "registered";
-    },
-  },
-  name: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  try {
+    const newUser = new User({
+      type: "registered",
+      name: user.name,
+      email: user.email,
+    });
+    return await newUser.save();
+  } catch (error) {
+    console.error("Error fetching user from database:", error);
+    return null;
+  }
+};
 
-export const User =
-  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+export const updateUserId = async (userId: string, newUserId: string) => {
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { _id: newUserId } },
+      { new: true }
+    );
 
-export const Location =
-  mongoose.models.Location || model<ILocation>("Location", addressSchema);
+    if (!updatedUser) {
+      throw new Error(`User with userId ${userId} not found`);
+    }
+
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating userId:", error);
+    throw error;
+  }
+};
+
+export const updateLocationsForUser = async (
+  userId: string,
+  newUserId: string
+) => {
+  try {
+    const result = await Location.updateMany(
+      { userId: userId },
+      { $set: { userId: newUserId } }
+    );
+
+    console.log(
+      `${result.matchedCount} of ${result.modifiedCount} locations updated for userId: ${userId}`
+    );
+
+    return result;
+  } catch (error) {
+    console.error("Error updating addresses:", error);
+    throw error;
+  }
+};

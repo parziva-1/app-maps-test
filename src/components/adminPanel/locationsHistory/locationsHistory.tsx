@@ -9,11 +9,13 @@ const LocationsHistory = () => {
   const [data, setData] = useState<ILocation[]>();
   const map = useMap();
 
-  const { data: sesion } = useSession();
-
   const fetchData = async () => {
     try {
-      const res = await fetch(`api/locations`);
+      const res = await fetch(`api/locations`, {
+        headers: {
+          credentials: "include",
+        },
+      });
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

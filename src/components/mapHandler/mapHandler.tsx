@@ -12,13 +12,13 @@ const MapHandler = ({ place }: PropsHandler) => {
 
   useEffect(() => {
     if (!map || !place) return;
-    const fetchData = async (place: google.maps.places.PlaceResult) => {
+    const saveLocation = async (place: google.maps.places.PlaceResult) => {
       await fetch("/api/locations", {
         method: "POST",
-        body: JSON.stringify({ location: place, user: session?.user }),
+        body: JSON.stringify({ location: place }),
       });
     };
-    fetchData(place);
+    saveLocation(place);
     if (place.geometry?.viewport) {
       map.fitBounds(place.geometry?.viewport);
     }

@@ -6,11 +6,6 @@ import styles from "./avatarContainer.module.css";
 const AvatarContainer = () => {
   const { data: session } = useSession();
 
-  // checking if sessions exists
-  if (session) {
-    //logged in code
-  }
-
   const handleButton = () => {
     if (session) {
       signOut();
@@ -20,7 +15,9 @@ const AvatarContainer = () => {
   };
 
   return (
-    <section className={styles.avatarContainer}>
+    <section
+      className={`${styles.avatarContainer} ${session && styles.signIn}`}
+    >
       {session ? (
         <>
           <p className={styles.userName}>{session?.user?.name}</p>
@@ -36,11 +33,11 @@ const AvatarContainer = () => {
       ) : null}
       {session ? (
         <Button type="" onClick={() => handleButton()}>
-          signOut
+          Sign Out
         </Button>
       ) : (
         <Button type="signIn" onClick={() => handleButton()}>
-          signIn
+          Sign In
         </Button>
       )}
     </section>
