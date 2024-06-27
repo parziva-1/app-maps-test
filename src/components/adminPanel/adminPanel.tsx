@@ -5,9 +5,7 @@ import { LocationsHistory } from "./locationsHistory";
 const AdminPanel = () => {
   return (
     <div className={styles.container}>
-      <section className={styles.containerCards}>
-        <LocationsHistory />
-      </section>
+      <LocationsHistory />
       <AvatarContainer />
     </div>
   );
