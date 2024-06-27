@@ -1,21 +1,5 @@
 import mongoose, { Document, Schema, model } from "mongoose";
 
-let isConnected = false;
-export const connectToDatabase = async () => {
-  mongoose.set("strictQuery", true);
-  if (isConnected) {
-    console.log("DB connected already");
-    return;
-  }
-
-  try {
-    await mongoose.connect(process.env.MONGODB_URI ?? "");
-    isConnected = true;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 export interface ILocation extends Document {
   userId: Schema.Types.ObjectId;
   formatted_address: string;
@@ -62,29 +46,6 @@ const addressSchema = new Schema(
   }
 );
 
-interface IUser extends Document<IUser> {
-  type: string;
-  email: string;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const userSchema = new Schema({
-  type: { type: String, required: true },
-  email: {
-    type: String,
-    required() {
-      return (this as IUser).type === "registered";
-    },
-  },
-  name: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
-
-export const User =
-  mongoose.models.User || mongoose.model<IUser>("User", userSchema);
-
-export const Location =
+const Location =
   mongoose.models.Location || model<ILocation>("Location", addressSchema);
+export default Location;

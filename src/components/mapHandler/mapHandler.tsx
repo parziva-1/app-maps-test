@@ -10,19 +10,19 @@ const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
   const { data: session } = useSession();
 
-  const fetchData = async (place: google.maps.places.PlaceResult) => {
-    await fetch("/api/locations", {
-      method: "POST",
-      body: JSON.stringify({ location: place, user: session?.user }),
-    });
-  };
-
   useEffect(() => {
     if (!map || !place) return;
+    const fetchData = async (place: google.maps.places.PlaceResult) => {
+      await fetch("/api/locations", {
+        method: "POST",
+        body: JSON.stringify({ location: place, user: session?.user }),
+      });
+    };
     fetchData(place);
     if (place.geometry?.viewport) {
       map.fitBounds(place.geometry?.viewport);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, place]);
 
   return null;

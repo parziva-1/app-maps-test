@@ -1,10 +1,10 @@
-import { Location, User, connectToDatabase } from "@/lib/db/database";
-import Error from "next/error";
+import { connectToDatabase } from "@/lib/db/database";
+import { Location, User } from "@/lib/db/models";
 import { cookies } from "next/headers";
 
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
   await connectToDatabase();
 
   try {
