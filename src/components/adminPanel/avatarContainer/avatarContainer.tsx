@@ -2,6 +2,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "./button";
 import Image from "next/image";
 import styles from "./avatarContainer.module.css";
+import { clearCookie } from "@/lib/helpers";
 
 const AvatarContainer = () => {
   const { data: session } = useSession();
@@ -9,6 +10,8 @@ const AvatarContainer = () => {
   const handleButton = () => {
     if (session) {
       signOut();
+      clearCookie("user_id");
+      clearCookie("user_type");
       return;
     }
     signIn();
