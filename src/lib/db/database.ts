@@ -16,7 +16,7 @@ export const connectToDatabase = async () => {
   }
 };
 
-interface ILocation extends Document {
+export interface ILocation extends Document {
   userId: Schema.Types.ObjectId;
   formatted_address: string;
   geometry: {
