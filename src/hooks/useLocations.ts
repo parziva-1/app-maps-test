@@ -1,5 +1,9 @@
 import { ILocation } from "@/lib/db/models/location";
-import { getLocations, postLocation } from "@/services/locations";
+import {
+  deleteLocation,
+  getLocations,
+  postLocation,
+} from "@/services/locations";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useLocations = () => {
@@ -10,14 +14,21 @@ const useLocations = () => {
     queryFn: () => getLocations(),
   });
 
-  const { mutate } = useMutation({
+  const { mutate: addLocation } = useMutation({
     mutationFn: postLocation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["locations"] });
     },
   });
 
-  return { locations: data?.locations, addLocation: mutate };
+  const { mutate: removeLocation } = useMutation({
+    mutationFn: deleteLocation,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["locations"] });
+    },
+  });
+
+  return { locations: data?.locations, addLocation, removeLocation };
 };
 
 export default useLocations;

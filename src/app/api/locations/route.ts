@@ -75,3 +75,23 @@ export async function POST(req: Request) {
     return NextResponse.json({ msg: errorMessage }, { status: statusCode });
   }
 }
+
+export async function DELETE(req: Request) {
+  await connectToDatabase();
+  const { _id } = await req.json();
+  try {
+    const deletedLocation = await Location.findByIdAndDelete(_id);
+
+    if (!deletedLocation) {
+      return NextResponse.json({ msg: "Location not found" });
+    }
+
+    return NextResponse.json({
+      msg: "Location deleted successfully",
+      deletedLocation,
+    });
+  } catch (error) {
+    console.error("Error deleting location:", error);
+    return NextResponse.json({ msg: "Error" });
+  }
+}
