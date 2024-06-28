@@ -1,4 +1,4 @@
-import { ILocation } from "@/components/models/location";
+import { ILocation } from "@/models/location";
 import {
   deleteLocation,
   getLocations,

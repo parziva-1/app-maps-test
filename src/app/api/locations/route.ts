@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db/database";
-import { Location, User } from "@/components/models";
+import { Location, User } from "@/models";
 import { cookies } from "next/headers";
 
 import { NextResponse } from "next/server";

@@ -4,7 +4,7 @@ import {
   updateLocationsForUser,
   updateUserId,
 } from "@/lib/db/database";
-import { IUser } from "@/components/models/user";
+import { IUser } from "@/models/user";
 import NextAuth from "next-auth/next";
 import GitHubProvider from "next-auth/providers/github";
 import { cookies } from "next/headers";

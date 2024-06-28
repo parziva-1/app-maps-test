@@ -1,4 +1,4 @@
-import { ILocation } from "@/components/models/location";
+import { ILocation } from "@/models/location";
 import { useEffect, useState } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
 import { CardHistory } from "./cardHistory";

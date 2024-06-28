@@ -1,4 +1,4 @@
-import { ILocation } from "@/components/models/location";
+import { ILocation } from "@/models/location";
 import styles from "./cardHistory.module.css";
 import { MouseEvent } from "react";
 import { useLocations } from "@/hooks";

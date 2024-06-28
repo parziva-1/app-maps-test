@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { Location, User } from "../../components/models";
-import { IUser } from "../../components/models/user";
+import { Location, User } from "../../models";
+import { IUser } from "../../models/user";
 
 let isConnected = false;
 export const connectToDatabase = async () => {
