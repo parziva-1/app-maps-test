@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useMap } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 
@@ -7,6 +8,11 @@ interface PropsHandler {
 
 const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
+  const queryClient = useQueryClient();
+
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["locations"] });
+  };
 
   useEffect(() => {
     if (!map || !place) return;
@@ -15,6 +21,7 @@ const MapHandler = ({ place }: PropsHandler) => {
         method: "POST",
         body: JSON.stringify({ location: place }),
       });
+      handleRefresh();
     };
     saveLocation(place);
     if (place.geometry?.viewport) {
