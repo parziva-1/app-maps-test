@@ -19,9 +19,8 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
   const [placesService, setPlacesService] =
     useState<google.maps.places.PlacesService | null>(null);
 
-  const [predictionResults, setPredictionResults] = useState<
-    Array<google.maps.places.AutocompletePrediction>
-  >([]);
+  const [predictionResults, setPredictionResults] =
+    useState<Array<google.maps.places.AutocompletePrediction>>();
 
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -38,7 +37,7 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
   const fetchPredictions = useCallback(
     async (inputValue: string) => {
       if (!autocompleteService || !inputValue) {
-        setPredictionResults([]);
+        setPredictionResults(undefined);
         return;
       }
 
@@ -86,7 +85,7 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
         placeDetails: google.maps.places.PlaceResult | null
       ) => {
         onPlaceSelect(placeDetails);
-        setPredictionResults([]);
+        setPredictionResults(undefined);
         setInputValue(placeDetails?.formatted_address ?? "");
         setSessionToken(new places.AutocompleteSessionToken());
       };
@@ -98,7 +97,7 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
 
   const handleClearInput = () => {
     setInputValue("");
-    setPredictionResults([]);
+    setPredictionResults(undefined);
   };
 
   return (
@@ -121,10 +120,10 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
         </button>
       )}
 
-      {predictionResults.length > 0 && (
+      {predictionResults && predictionResults?.length > 0 && (
         <div className={styles.customListContainer}>
           <ul className={styles.customList}>
-            {predictionResults.map(({ place_id, description }) => (
+            {predictionResults?.map(({ place_id, description }) => (
               <li
                 key={place_id}
                 className={styles.customListItem}
@@ -133,6 +132,13 @@ const Autocomplete = ({ onPlaceSelect }: Props) => {
                 {description}
               </li>
             ))}
+          </ul>
+        </div>
+      )}
+      {predictionResults?.length === 0 && (
+        <div className={styles.customListContainer}>
+          <ul className={styles.customList}>
+            <li className={styles.customListItem}>No results found.</li>
           </ul>
         </div>
       )}
