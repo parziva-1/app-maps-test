@@ -16,6 +16,11 @@ const MapHandler = ({ place }: PropsHandler) => {
 
     if (place.geometry?.viewport) {
       map.fitBounds(place.geometry?.viewport);
+      new google.maps.Marker({
+        position: place.geometry.location,
+        map,
+        title: place.name,
+      });
     }
   }, [addLocation, map, place]);
 

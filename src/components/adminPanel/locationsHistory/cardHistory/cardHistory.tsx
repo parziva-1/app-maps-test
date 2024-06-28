@@ -1,11 +1,15 @@
-import { ILocation } from "@/lib/db/models/location";
+import { ILocation } from "@/components/models/location";
 import styles from "./cardHistory.module.css";
 import { MouseEvent } from "react";
 import { useLocations } from "@/hooks";
 
 interface props {
   data: ILocation;
-  handleSelectLocation: (location: ILocation["geometry"]["viewport"]) => void;
+  handleSelectLocation: (
+    viewport: ILocation["geometry"]["viewport"],
+    location: ILocation["geometry"]["location"],
+    name: string
+  ) => void;
 }
 
 const CardHistory = ({ data, handleSelectLocation }: props) => {
@@ -21,8 +25,10 @@ const CardHistory = ({ data, handleSelectLocation }: props) => {
     <div
       className={styles.card}
       onClick={() => {
-        const { _id, ...location } = data.geometry?.viewport;
-        handleSelectLocation(location);
+        const { _id, ...viewport } = data.geometry?.viewport;
+        const { location, ...rest } = data.geometry;
+
+        handleSelectLocation(viewport, location, data.name);
       }}
     >
       <div className={styles.delete_icon}>

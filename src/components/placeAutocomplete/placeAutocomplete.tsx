@@ -1,50 +1,116 @@
-import { useMapsLibrary } from "@vis.gl/react-google-maps";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, useCallback, FormEvent } from "react";
+import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import styles from "./placeAutocomplete.module.css";
-
+import { useDebounce } from "@/hooks";
 interface Props {
   onPlaceSelect: (place: google.maps.places.PlaceResult | null) => void;
 }
 
-const PlaceAutocompleteClassic = ({ onPlaceSelect }: Props) => {
-  const [placeAutocomplete, setPlaceAutocomplete] =
-    useState<google.maps.places.Autocomplete | null>(null);
-  const [inputValue, setInputValue] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement>(null);
+const Autocomplete = ({ onPlaceSelect }: Props) => {
+  const map = useMap();
   const places = useMapsLibrary("places");
 
-  useEffect(() => {
-    if (!places || !inputRef.current) return;
+  const [sessionToken, setSessionToken] =
+    useState<google.maps.places.AutocompleteSessionToken>();
 
-    const options = {
-      fields: ["geometry", "name", "formatted_address"],
+  const [autocompleteService, setAutocompleteService] =
+    useState<google.maps.places.AutocompleteService | null>(null);
+
+  const [placesService, setPlacesService] =
+    useState<google.maps.places.PlacesService | null>(null);
+
+  const [predictionResults, setPredictionResults] = useState<
+    Array<google.maps.places.AutocompletePrediction>
+  >([]);
+
+  const [inputValue, setInputValue] = useState<string>("");
+
+  useEffect(() => {
+    if (!places || !map) return;
+
+    setAutocompleteService(new places.AutocompleteService());
+    setPlacesService(new places.PlacesService(map));
+    setSessionToken(new places.AutocompleteSessionToken());
+
+    return () => setAutocompleteService(null);
+  }, [map, places]);
+
+  const fetchPredictions = useCallback(
+    async (inputValue: string) => {
+      if (!autocompleteService || !inputValue) {
+        setPredictionResults([]);
+        return;
+      }
+
+      const request = { input: inputValue, sessionToken };
+      const response = await autocompleteService.getPlacePredictions(request);
+
+      setPredictionResults(response.predictions);
+    },
+    [autocompleteService, sessionToken]
+  );
+
+  const fetchPredictionsDebounced = useDebounce(fetchPredictions, 700);
+
+  const debounce = (func: Function, delay: number) => {
+    let timer: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func(...args);
+      }, delay);
     };
+  };
 
-    setPlaceAutocomplete(new places.Autocomplete(inputRef.current, options));
-  }, [places]);
+  const onInputChange = useCallback(
+    (event: FormEvent<HTMLInputElement>) => {
+      const value = (event.target as HTMLInputElement)?.value;
 
-  useEffect(() => {
-    if (!placeAutocomplete) return;
+      setInputValue(value);
+      fetchPredictionsDebounced(value);
+    },
+    [fetchPredictionsDebounced]
+  );
 
-    placeAutocomplete.addListener("place_changed", () => {
-      onPlaceSelect(placeAutocomplete.getPlace());
-      setInputValue(placeAutocomplete.getPlace().formatted_address as string);
-    });
-  }, [onPlaceSelect, placeAutocomplete]);
+  const handleSuggestionClick = useCallback(
+    (placeId: string) => {
+      if (!places) return;
+
+      const detailRequestOptions = {
+        placeId,
+        fields: ["geometry", "name", "formatted_address"],
+        sessionToken,
+      };
+
+      const detailsRequestCallback = (
+        placeDetails: google.maps.places.PlaceResult | null
+      ) => {
+        onPlaceSelect(placeDetails);
+        setPredictionResults([]);
+        setInputValue(placeDetails?.formatted_address ?? "");
+        setSessionToken(new places.AutocompleteSessionToken());
+      };
+
+      placesService?.getDetails(detailRequestOptions, detailsRequestCallback);
+    },
+    [onPlaceSelect, places, placesService, sessionToken]
+  );
+
   const handleClearInput = () => {
     setInputValue("");
+    setPredictionResults([]);
   };
 
   return (
     <div className={styles.container}>
       <input
         className={styles.input}
-        ref={inputRef}
         value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
+        onInput={(event: FormEvent<HTMLInputElement>) => onInputChange(event)}
+        placeholder="Search for a place"
       />
-      <button className={styles.button} onClick={handleClearInput}>
-        {inputValue && (
+      {inputValue && (
+        <button className={styles.button} onClick={handleClearInput}>
           <svg className={styles.svg} fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"
@@ -52,10 +118,26 @@ const PlaceAutocompleteClassic = ({ onPlaceSelect }: Props) => {
               clipRule="evenodd"
             />
           </svg>
-        )}
-      </button>
+        </button>
+      )}
+
+      {predictionResults.length > 0 && (
+        <div className={styles.customListContainer}>
+          <ul className={styles.customList}>
+            {predictionResults.map(({ place_id, description }) => (
+              <li
+                key={place_id}
+                className={styles.customListItem}
+                onClick={() => handleSuggestionClick(place_id)}
+              >
+                {description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
 
-export default PlaceAutocompleteClassic;
+export default Autocomplete;

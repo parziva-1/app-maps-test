@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db/database";
-import { Location, User } from "@/lib/db/models";
+import { Location, User } from "@/components/models";
 import { cookies } from "next/headers";
 
 import { NextResponse } from "next/server";
@@ -44,6 +44,18 @@ export async function POST(req: Request) {
       const cookieStore = cookies();
       cookieStore.set("user_id", userId);
       cookieStore.set("user_type", String(savedUser.type));
+    }
+
+    const existingLocation = await Location.findOne({
+      formatted_address: location.formatted_address,
+      userId: userId,
+    });
+
+    if (existingLocation) {
+      return NextResponse.json(
+        { msg: "Duplicate location found" },
+        { status: 400 }
+      );
     }
 
     const locationToSave = new Location({

@@ -4,6 +4,10 @@ export interface ILocation extends Document {
   userId: Schema.Types.ObjectId;
   formatted_address: string;
   geometry: {
+    location: {
+      lat: number;
+      lng: number;
+    };
     viewport: {
       _id?: string;
       east: number;
@@ -22,6 +26,10 @@ const addressSchema = new Schema(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     formatted_address: String,
     geometry: {
+      location: {
+        lat: Number,
+        lng: Number,
+      },
       viewport: {
         east: Number,
         north: Number,

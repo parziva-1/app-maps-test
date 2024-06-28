@@ -31,6 +31,7 @@ const AvatarContainer = () => {
             className={styles.avatarImage}
             width={80}
             height={80}
+            priority
           />
         </>
       ) : null}
