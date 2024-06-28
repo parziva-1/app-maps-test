@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useLocations } from "@/hooks";
 import { useMap } from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 
@@ -8,27 +8,16 @@ interface PropsHandler {
 
 const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
-  const queryClient = useQueryClient();
-
-  const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ["locations"] });
-  };
+  const { addLocation } = useLocations();
 
   useEffect(() => {
     if (!map || !place) return;
-    const saveLocation = async (place: google.maps.places.PlaceResult) => {
-      await fetch("/api/locations", {
-        method: "POST",
-        body: JSON.stringify({ location: place }),
-      });
-      handleRefresh();
-    };
-    saveLocation(place);
+    addLocation(place);
+
     if (place.geometry?.viewport) {
       map.fitBounds(place.geometry?.viewport);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, place]);
+  }, [addLocation, map, place]);
 
   return null;
 };

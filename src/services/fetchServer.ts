@@ -1,6 +1,6 @@
-const server = async (url: string) => {
+const server = async (url: string, options?: { [key: string]: string }) => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { ...options });
 
     if (!response.ok) {
       let errorData;

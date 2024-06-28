@@ -1,7 +1,12 @@
 import server from "./fetchServer";
 
-const getLocations = async () => {
+export const getLocations = async () => {
   return await server("/api/locations");
 };
 
-export default getLocations;
+export const postLocation = async (place: google.maps.places.PlaceResult) => {
+  return await server("/api/locations", {
+    method: "POST",
+    body: JSON.stringify({ location: place }),
+  });
+};
