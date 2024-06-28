@@ -1,5 +1,4 @@
 import { ILocation } from "@/lib/db/models/location";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
 import { CardHistory } from "./cardHistory";
@@ -20,7 +19,6 @@ const LocationsHistory = () => {
         throw new Error(`HTTP error! status: ${res.status}`);
       }
       const data = await res.json();
-      console.log({ data });
       setData(data.locations);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -43,7 +41,7 @@ const LocationsHistory = () => {
         <>
           {data.map((v) => (
             <CardHistory
-              key={v.formatted_address}
+              key={v._id as string}
               handleSelectLocation={handleSelectLocation}
               data={v}
             />

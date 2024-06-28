@@ -36,14 +36,12 @@ const addressSchema = new Schema(
   {
     toJSON: {
       transform: (doc, ret) => {
-        delete ret._id;
         delete ret.__v;
         return ret;
       },
     },
     toObject: {
       transform: (doc, ret) => {
-        delete ret._id;
         delete ret.__v;
         return ret;
       },

@@ -28,7 +28,6 @@ const PlaceAutocompleteClassic = ({ onPlaceSelect }: Props) => {
 
     placeAutocomplete.addListener("place_changed", () => {
       onPlaceSelect(placeAutocomplete.getPlace());
-
       setInputValue(placeAutocomplete.getPlace().formatted_address as string);
     });
   }, [onPlaceSelect, placeAutocomplete]);

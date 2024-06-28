@@ -1,5 +1,4 @@
 import { useMap } from "@vis.gl/react-google-maps";
-import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 interface PropsHandler {
@@ -8,7 +7,6 @@ interface PropsHandler {
 
 const MapHandler = ({ place }: PropsHandler) => {
   const map = useMap();
-  const { data: session } = useSession();
 
   useEffect(() => {
     if (!map || !place) return;

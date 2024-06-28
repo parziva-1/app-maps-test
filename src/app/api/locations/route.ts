@@ -9,7 +9,7 @@ export async function GET() {
 
   try {
     const userId = cookies().get("user_id")?.value;
-    const locations = await Location.find({ userId });
+    const locations = await Location.find({ userId }).sort({ createdAt: -1 });
     return NextResponse.json({ msg: "Locations:", locations });
   } catch (error) {
     console.error("Error fetching locations:", error);
@@ -46,7 +46,12 @@ export async function POST(req: Request) {
       cookieStore.set("user_type", String(savedUser.type));
     }
 
-    const locationToSave = new Location({ ...location, userId });
+    const locationToSave = new Location({
+      ...location,
+      userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     const savedLocation = await locationToSave.save();
 
     return NextResponse.json(
