@@ -3,27 +3,11 @@ import { useEffect, useState } from "react";
 import { useMap } from "@vis.gl/react-google-maps";
 import { CardHistory } from "./cardHistory";
 import styles from "./locationsHistory.module.css";
+import { useLocations } from "@/hooks";
 
 const LocationsHistory = () => {
-  const [data, setData] = useState<ILocation[]>();
+  const { locations } = useLocations();
   const map = useMap();
-
-  const fetchData = async () => {
-    try {
-      const res = await fetch(`api/locations`, {
-        headers: {
-          credentials: "include",
-        },
-      });
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      const data = await res.json();
-      setData(data.locations);
-    } catch (error) {
-      console.error("Fetch error:", error);
-    }
-  };
 
   const handleSelectLocation = (
     location: ILocation["geometry"]["viewport"]
@@ -31,15 +15,11 @@ const LocationsHistory = () => {
     if (map) map.fitBounds(location);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   return (
     <div className={styles.historyContainer}>
-      {data?.length ? (
+      {locations?.length ? (
         <>
-          {data.map((v) => (
+          {locations?.map((v) => (
             <CardHistory
               key={v._id as string}
               handleSelectLocation={handleSelectLocation}
